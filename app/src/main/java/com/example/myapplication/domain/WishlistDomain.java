@@ -2,9 +2,7 @@ package com.example.myapplication.domain;
 
 import java.io.Serializable;
 
-public class PopularDomain implements Serializable {
-
-    private int id;
+public class WishlistDomain implements Serializable {
     private String title;
     private String picUrl;
     private int review;
@@ -13,8 +11,7 @@ public class PopularDomain implements Serializable {
     private double price;
     private String description;
 
-    public PopularDomain(String title, String picUrl, int review, double score, double price, String description) {
-        this.id = id;
+    public WishlistDomain(String title, String picUrl, int review, double score, double price, String description) {
         this.title = title;
         this.picUrl = picUrl;
         this.review = review;
@@ -23,14 +20,6 @@ public class PopularDomain implements Serializable {
         this.description = description;
     }
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
     public String getDescription() {
         return description;
     }
