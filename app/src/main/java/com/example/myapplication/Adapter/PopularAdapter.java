@@ -2,8 +2,8 @@ package com.example.myapplication.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -14,58 +14,72 @@ import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners;
 import com.example.myapplication.Activity.DetailActivity;
 import com.example.myapplication.databinding.ViewholderPupListBinding;
 import com.example.myapplication.domain.PopularDomain;
+import com.example.myapplication.help.DataBase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PopularAdapter extends RecyclerView.Adapter<PopularAdapter.Viewholder> {
-    ArrayList<PopularDomain> items;
-    Context context;
-    ViewholderPupListBinding binding;
+    private final ArrayList<PopularDomain> items;
+    private final Context context;
 
-    public PopularAdapter(ArrayList<PopularDomain> items) {
+    public PopularAdapter(Context context, ArrayList<PopularDomain> items) {
         this.items = items;
+        this.context = context;
+    }
+
+    public void updateItems(List<PopularDomain> newItems) {
+        this.items.clear();
+        this.items.addAll(newItems);
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public PopularAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        binding = ViewholderPupListBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
-        context = parent.getContext();
+        ViewholderPupListBinding binding = ViewholderPupListBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new Viewholder(binding);
     }
 
-    @Override
     public void onBindViewHolder(@NonNull PopularAdapter.Viewholder holder, int position) {
-        binding.titleTxt.setText(items.get(position).getTitle());
-        binding.feeTxt.setText("$" + items.get(position).getPrice());
-        binding.scoreTxt.setText("" + items.get(position).getScore());
-        binding.reviewTxt.setText("" + items.get(position).getReview());
+        PopularDomain item = items.get(position);
 
-        int drawableResourced=holder.itemView.getResources().getIdentifier(items.get(position).getPicUrl()
-                , "drawable",holder.itemView.getContext().getPackageName());
+        Log.d("RecyclerView", "Item: " + item.getTitle());
+        holder.binding.titleTxt.setText(item.getTitle());
+        holder.binding.feeTxt.setText("$" + item.getPrice());
+        holder.binding.scoreTxt.setText("" + item.getScore());
+        holder.binding.reviewTxt.setText("" + item.getReview());
+
+        int drawableResourceId = holder.itemView.getResources().getIdentifier(
+                item.getPicUrl(),
+                "drawable",
+                context.getPackageName()
+        );
+
         Glide.with(context)
-                .load(drawableResourced)
-                .transform(new GranularRoundedCorners(30,30,0,0))
-                .into(binding.pic);
+                .load(drawableResourceId)
+                .transform(new GranularRoundedCorners(30, 30, 0, 0))
+                .into(holder.binding.pic);
 
-
+        // Устанавливаем обработчик клика
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, DetailActivity.class);
-            intent.putExtra("object",items.get(position));
+            intent.putExtra("object", item);
             context.startActivity(intent);
-
         });
     }
-
 
     @Override
     public int getItemCount() {
         return items.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder{
+    public static class Viewholder extends RecyclerView.ViewHolder {
+        final ViewholderPupListBinding binding;
+
         public Viewholder(ViewholderPupListBinding binding) {
             super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

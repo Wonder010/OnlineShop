@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,17 +43,28 @@ public class LoginActivity extends AppCompatActivity {
                 String username = edUsername.getText().toString();
                 String password = edPassword.getText().toString();
                 DataBase db = new DataBase(getApplicationContext(),"onlineshopDB",null,1);
-                if(username.length()==0||password.length()==0){
+                db.insertUsers();
+                db.insertDefaultItems();
+                if(username.isEmpty() || password.isEmpty()){
                     Toast.makeText(getApplicationContext(),"Please fill all details",Toast.LENGTH_SHORT).show();
                 }else{
-                    if(db.login(username,password)==1){
-                        Toast.makeText(getApplicationContext(),"Login success",Toast.LENGTH_SHORT).show();
+                    int userId = db.login(username, password);
+                    if (userId != -1) {
+                        // Успешный вход
+                        Log.d("LoginActivity", "Login successful, userId: " + userId);
+                        Toast.makeText(getApplicationContext(), "Login success", Toast.LENGTH_SHORT).show();
+
+                        // Сохраняем имя пользователя для дальнейшего использования
                         SharedPreferences sharedPreferences = getSharedPreferences("shared_prefs", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString("username",username);
+                        editor.putString("username", username);
                         editor.apply();
-                        startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        intent.putExtra("USER_ID", userId);
+                        startActivity(intent);
+
                     }else{
+                        Log.d("LoginActivity", "Login failed. Invalid username/password.");
                         Toast.makeText(getApplicationContext(),"Invalid Username and Password",Toast.LENGTH_SHORT).show();
                     }
                 }

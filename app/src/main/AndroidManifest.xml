@@ -13,9 +13,17 @@
         android:theme="@style/Theme.MyApplication"
         tools:targetApi="33">
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name=".Activity.AdminUserListActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".Activity.AdminItemsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AdminCartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AdminPanelActivity"
+            android:exported="false" />
         <activity
             android:name=".Activity.RegisterActivity"
             android:exported="false" />
@@ -32,7 +40,7 @@
             android:name=".Activity.DetailActivity"
             android:exported="false" />
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".Activity.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,6 +48,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activity.MainActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
