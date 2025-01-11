@@ -7,18 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".Activity.AdminUserListActivity">
 
-    <ImageView
-        android:id="@+id/backBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/arrow"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
-
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textSize="18sp"
+            app:srcCompat="@drawable/arrow" />
 
         <LinearLayout
             android:id="@+id/items_container"
@@ -26,11 +25,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp" />
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/pagination_container"
