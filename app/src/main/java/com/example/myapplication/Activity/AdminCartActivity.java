@@ -69,9 +69,9 @@ public class AdminCartActivity extends AppCompatActivity {
         cartContainer.removeAllViews();
 
         // Загружаем пользователей текущей страницы
-        List<PopularDomain> items = db.getCartItemsByPage(page, PAGE_SIZE);
+        List<PopularDomain> cartItems = db.getCartItemsByPage(page, PAGE_SIZE);
 
-        for (PopularDomain item : items) {
+        for (PopularDomain cartList : cartItems) {
             // Создаем View для каждого пользователя
             TextView cartView = new TextView(this);
             cartView.setText(String.format("ItemID: %s\n" +
@@ -82,7 +82,7 @@ public class AdminCartActivity extends AppCompatActivity {
                             "Price: %s\n" +
                             "Description: %s\n"+
                             "Number in cart: %s",
-                    item.getId(),item.getTitle(), item.getPicUrl(), item.getReview(), item.getScore(), item.getPrice(), item.getDescription(),item.getNumberInCart()));
+                    cartList.getId(),cartList.getTitle(), cartList.getPicUrl(), cartList.getReview(), cartList.getScore(), cartList.getPrice(), cartList.getDescription(),cartList.getNumberInCart()));
             cartView.setPadding(16, 16, 16, 16);
 
             // Добавляем созданное View в контейнер

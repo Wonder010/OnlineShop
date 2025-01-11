@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                 DataBase db = new DataBase(getApplicationContext(),"onlineshopDB",null,1);
                 db.insertUsers();
                 db.insertDefaultItems();
+                db.populateUsersTable();
                 if(username.isEmpty() || password.isEmpty()){
                     Toast.makeText(getApplicationContext(),"Please fill all details",Toast.LENGTH_SHORT).show();
                 }else{

@@ -15,16 +15,22 @@ public class ManagmentCart {
 
     public ManagmentCart(Context context) {
         this.context = context;
-        this.dataBase = new DataBase(context, "onlineshopDB", null, 1); // Создаем или открываем базу данных
+        this.dataBase = new DataBase(context, "onlineshopDB", null, 1); // Initialize Database
     }
 
+    // Get the list of cart items from the database
+    public ArrayList<PopularDomain> getListCart() {
+        List<PopularDomain> cartItems = dataBase.getCartItems();
+        return new ArrayList<>(cartItems);
+    }
+
+    // Adds or updates item quantity in the cart
     public void insertFood(PopularDomain item) {
         List<PopularDomain> cartList = getListCart();
         boolean exists = false;
 
         for (PopularDomain existingItem : cartList) {
             if (existingItem.getTitle().equals(item.getTitle())) {
-                // Увеличиваем количество вместо перезаписи
                 existingItem.setNumberInCart(existingItem.getNumberInCart() + item.getNumberInCart());
                 dataBase.updateItem(existingItem);
                 exists = true;
@@ -33,53 +39,41 @@ public class ManagmentCart {
         }
 
         if (!exists) {
-            // Добавляем новый элемент в корзину
             dataBase.addItem(item);
         }
 
         Toast.makeText(context, "Added to your Cart", Toast.LENGTH_SHORT).show();
     }
 
-    public ArrayList<PopularDomain> getListCart() {
-        // Получаем список элементов корзины из базы данных
-        List<PopularDomain> items = dataBase.getCartItems(); // Предполагается, что этот метод возвращает только элементы корзины
-        return new ArrayList<>(items);
-    }
-
     public Double getTotalFee() {
-        List<PopularDomain> listItem = getListCart();
-        double fee = 0;
-        for (PopularDomain item : listItem) {
-            fee += (item.getPrice() * item.getNumberInCart());
+        List<PopularDomain> cartList = getListCart();
+        double totalFee = 0;
+        for (PopularDomain item : cartList) {
+            totalFee += (item.getPrice() * item.getNumberInCart());
         }
-        return fee;
+        return totalFee;
     }
 
-    public void minusNumberItem(ArrayList<PopularDomain> listItem, int position, ChangeNumberItemsListener changeNumberItemsListener) {
-        PopularDomain item = listItem.get(position);
+    // Decreases the number of items in cart
+    public void minusNumberItem(ArrayList<PopularDomain> items, int position, ChangeNumberItemsListener listener) {
+        PopularDomain item = items.get(position);
         if (item.getNumberInCart() == 1) {
-            // Удаляем элемент из базы данных и списка
             dataBase.deleteItem(item.getId());
-            listItem.remove(position);
+            items.remove(position);
         } else {
-            // Уменьшаем количество элемента и обновляем запись
             item.setNumberInCart(item.getNumberInCart() - 1);
-            Log.d("CartUpdate", "Before update: " + item.getNumberInCart());
             dataBase.updateItem(item);
-            Log.d("CartUpdate", "After update: " + item.getNumberInCart());
         }
-
-        changeNumberItemsListener.change();
+        listener.change();
     }
 
-    public void plusNumberItem(ArrayList<PopularDomain> listItem, int position, ChangeNumberItemsListener changeNumberItemsListener) {
-        PopularDomain item = listItem.get(position);
-        // Увеличиваем количество элемента
+    // Increases the number of items in cart
+    public void plusNumberItem(ArrayList<PopularDomain> items, int position, ChangeNumberItemsListener listener) {
+        PopularDomain item = items.get(position);
         item.setNumberInCart(item.getNumberInCart() + 1);
-        Log.d("CartUpdate", "Before update: " + item.getNumberInCart());
         dataBase.updateItem(item);
-        Log.d("CartUpdate", "After update: " + item.getNumberInCart());
-        changeNumberItemsListener.change();
+        listener.change();
     }
 }
+
 

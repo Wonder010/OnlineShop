@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -140,12 +141,14 @@ public class DataBase extends SQLiteOpenHelper {
     }
 
     public void updateItem(PopularDomain item) {
+        Log.d("DatabaseUpdate", "Updating item: " + item.getTitle() + ", ID: " + item.getId() + ", NumberInCart: " + item.getNumberInCart());
         ContentValues cv = new ContentValues();
+
         cv.put("numberInCart", item.getNumberInCart());
-        cv.put("price", item.getPrice()); // Опционально
-        cv.put("description", item.getDescription()); // Опционально
+
         SQLiteDatabase db = getWritableDatabase();
-        db.update("cart", cv, "id = ?", new String[]{String.valueOf(item.getId())});
+        int rowsUpdated = db.update("cart", cv, "id = ?", new String[]{String.valueOf(item.getId())});
+        Log.d("DatabaseUpdate", "Rows updated: " + rowsUpdated);
         db.close();
     }
 
@@ -256,6 +259,38 @@ public class DataBase extends SQLiteOpenHelper {
         db.close();
         return users;
     }
+
+    // Добавление пользователя
+    public void addUser(User user) {
+        ContentValues cv = new ContentValues();
+        cv.put("username", user.getUsername());
+        cv.put("email", user.getEmail());
+        cv.put("password", user.getPassword());
+        cv.put("adminpriority", user.getAdminpriority());
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert("users", null, cv);
+        db.close();
+    }
+
+    // Изменение пользователя
+    public void updateUser(User user) {
+        ContentValues cv = new ContentValues();
+        cv.put("username", user.getUsername());
+        cv.put("email", user.getEmail());
+        cv.put("password", user.getPassword());
+        cv.put("adminpriority", user.getAdminpriority());
+        SQLiteDatabase db = getWritableDatabase();
+        db.update("users", cv, "useriD = ?", new String[]{String.valueOf(user.getUserId())});
+        db.close();
+    }
+
+    // Удаление пользователя
+    public void deleteUser(int userId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("users", "useriD = ?", new String[]{String.valueOf(userId)});
+        db.close();
+    }
+
     public void insertUsers() {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -265,6 +300,63 @@ public class DataBase extends SQLiteOpenHelper {
             db.execSQL("INSERT INTO users (username, email, password, adminpriority) " +
                     "VALUES ('Wonder', 'ya.sir-len2013@mail.ru', 'vvtbond123$', 1)");
 
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        db.close();
+    }
+    public void additem(PopularDomain item) {
+        ContentValues cv = new ContentValues();
+        cv.put("title", item.getTitle());
+        cv.put("picUrl", item.getPicUrl());
+        cv.put("review", item.getReview());
+        cv.put("score", item.getScore());
+        cv.put("price", item.getPrice());
+        cv.put("description", item.getDescription());
+        SQLiteDatabase db = getWritableDatabase();
+        db.insert("items", null, cv);
+        db.close();
+    }
+
+    public void updateitem(PopularDomain item) {
+        ContentValues cv = new ContentValues();
+        cv.put("title", item.getTitle());
+        cv.put("picUrl", item.getPicUrl());
+        cv.put("review", item.getReview());
+        cv.put("score", item.getScore());
+        cv.put("price", item.getPrice());
+        cv.put("description", item.getDescription());
+        SQLiteDatabase db = getWritableDatabase();
+        db.update("items", cv, "id = ?", new String[]{String.valueOf(item.getId())});
+        db.close();
+    }
+
+    public void deleteitem(int itemId) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("items", "id = ?", new String[]{String.valueOf(itemId)});
+        db.close();
+
+    }
+
+    public void populateUsersTable() {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Используем транзакцию для повышения производительности
+        db.beginTransaction();
+        try {
+            for (int i = 1; i <= 1000; i++) {
+                String username = "User" + i;
+                String email = "user" + i + "@example.com";
+                String password = "password" + i;
+
+                ContentValues cv = new ContentValues();
+                cv.put("username", username);
+                cv.put("email", email);
+                cv.put("password", password);
+                db.insert("users", null, cv);
+            }
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();

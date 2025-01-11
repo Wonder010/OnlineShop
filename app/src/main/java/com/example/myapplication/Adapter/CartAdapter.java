@@ -21,64 +21,70 @@ import com.example.myapplication.help.ManagmentCart;
 import java.util.ArrayList;
 
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
-    ArrayList<PopularDomain> items;
-    Context context;
-    ViewholderCartBinding binding;
-    ChangeNumberItemsListener changeNumberItemsListener;
-    ManagmentCart managmentCart;
+    private ArrayList<PopularDomain> items;
+    private Context context;
+    private ChangeNumberItemsListener changeNumberItemsListener;
+    private ManagmentCart managmentCart;
 
-    public CartAdapter(ArrayList<PopularDomain> items, ChangeNumberItemsListener changeNumberItemsListener) {
+    public CartAdapter(Context context, ArrayList<PopularDomain> items, ChangeNumberItemsListener changeNumberItemsListener) {
         this.items = items;
+        this.context = context;
         this.changeNumberItemsListener = changeNumberItemsListener;
+        this.managmentCart = new ManagmentCart(context);
     }
 
     @NonNull
     @Override
     public CartAdapter.Viewholder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        binding = ViewholderCartBinding.inflate(LayoutInflater.from(parent.getContext()),parent,false);
-        context = parent.getContext();
-        managmentCart = new ManagmentCart(context);
+        ViewholderCartBinding binding = ViewholderCartBinding.inflate(LayoutInflater.from(context), parent, false);
         return new Viewholder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CartAdapter.Viewholder holder, int position) {
-        binding.titleTxt.setText(items.get(position).getTitle());
-        binding.feeEachItem.setText("$" + items.get(position).getPrice());
-        binding.totalEachItem.setText("$" + Math.round(items.get(position).getNumberInCart() * items.get(position).getPrice()));
-        binding.numberItemTxt.setText(String.valueOf(items.get(position).getNumberInCart()));
+        PopularDomain item = items.get(position);
+        holder.binding.titleTxt.setText(item.getTitle());
+        holder.binding.feeEachItem.setText("$" + item.getPrice());
+        holder.binding.totalEachItem.setText("$" + Math.round(item.getNumberInCart() * item.getPrice()));
+        holder.binding.numberItemTxt.setText(String.valueOf(item.getNumberInCart()));
 
-        int drawableResourced=holder.itemView.getResources().getIdentifier(items.get(position).getPicUrl()
-                , "drawable",holder.itemView.getContext().getPackageName());
+        int drawableResource = context.getResources().getIdentifier(item.getPicUrl(), "drawable", context.getPackageName());
         Glide.with(context)
-                .load(drawableResourced)
-                .transform(new GranularRoundedCorners(30,30,0,0))
-                .into(binding.pic);
+                .load(drawableResource)
+                .transform(new GranularRoundedCorners(30, 30, 0, 0))
+                .into(holder.binding.pic);
 
+        holder.binding.plusCartBtn.setOnClickListener(v -> {
+            managmentCart.plusNumberItem(items, position, () -> {
+                items.clear();
+                items.addAll(managmentCart.getListCart());
+                notifyDataSetChanged();
+                changeNumberItemsListener.change();
+            });
+        });
 
-        binding.plusCartBtn.setOnClickListener(v -> managmentCart.plusNumberItem(items, position, () -> {
-            items.clear();
-            items.addAll(managmentCart.getListCart());
-            notifyDataSetChanged();
-            changeNumberItemsListener.change();
-        }));
-        binding.minusCartBtn.setOnClickListener(v -> managmentCart.minusNumberItem(items, position, () -> {
-            items.clear();
-            items.addAll(managmentCart.getListCart());
-            notifyDataSetChanged();
-            changeNumberItemsListener.change();
-        }));
+        holder.binding.minusCartBtn.setOnClickListener(v -> {
+            managmentCart.minusNumberItem(items, position, () -> {
+                items.clear();
+                items.addAll(managmentCart.getListCart());
+                notifyDataSetChanged();
+                changeNumberItemsListener.change();
+            });
+        });
     }
-
 
     @Override
     public int getItemCount() {
         return items.size();
     }
 
-    public class Viewholder extends RecyclerView.ViewHolder{
+    public class Viewholder extends RecyclerView.ViewHolder {
+        ViewholderCartBinding binding;
+
         public Viewholder(ViewholderCartBinding binding) {
             super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }
+
