@@ -57,10 +57,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.Viewholder> {
 
 
         binding.plusCartBtn.setOnClickListener(v -> managmentCart.plusNumberItem(items, position, () -> {
+            items.clear();
+            items.addAll(managmentCart.getListCart());
             notifyDataSetChanged();
             changeNumberItemsListener.change();
         }));
         binding.minusCartBtn.setOnClickListener(v -> managmentCart.minusNumberItem(items, position, () -> {
+            items.clear();
+            items.addAll(managmentCart.getListCart());
             notifyDataSetChanged();
             changeNumberItemsListener.change();
         }));

@@ -3,6 +3,7 @@ package com.example.myapplication.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -11,6 +12,7 @@ import com.bumptech.glide.Glide;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.ActivityDetailBinding;
 import com.example.myapplication.domain.PopularDomain;
+import com.example.myapplication.help.DataBase;
 import com.example.myapplication.help.ManagmentCart;
 
 public class DetailActivity extends AppCompatActivity {
@@ -51,8 +53,10 @@ public class DetailActivity extends AppCompatActivity {
         binding.addToCardBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 object.setNumberInCart(numberOrder);
                 managmentCart.insertFood(object);
+
             }
         });
 

@@ -9,11 +9,11 @@ public class PopularDomain implements Serializable {
     private String picUrl;
     private int review;
     private double score;
-    private int numberInCart;
+    private int numberInCart = 1;
     private double price;
     private String description;
 
-    public PopularDomain(String title, String picUrl, int review, double score, double price, String description) {
+    public PopularDomain(int id,String title, String picUrl, int review, double score, double price, String description) {
         this.id = id;
         this.title = title;
         this.picUrl = picUrl;
